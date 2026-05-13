@@ -55,12 +55,25 @@ const generateHandwriting = async (req, res) => {
         styleMetrics: profile?.processedData || null,
         settings: {
           pageType: settings?.pageType || 'lined',
-          fontSize: profile?.processedData?.avgSize ? Math.round(profile.processedData.avgSize * 12) : (settings?.fontSize || 24),
+          // avgSize from extractor is stroke width (1–6px), NOT font size.
+          // Map stroke width → font size: thin strokes (~1px) = small writing (~18px),
+          // thick strokes (~5px) = large writing (~36px). User setting overrides profile.
+          fontSize: (() => {
+            const userSize = settings?.fontSize;
+            if (userSize && userSize >= 14) return userSize;
+            const strokeW = profile?.processedData?.avgSize;
+            if (strokeW) return Math.max(16, Math.min(40, Math.round(14 + strokeW * 4)));
+            return 24;
+          })(),
           inkColor: settings?.inkColor || '#1a1a2e',
           penType: settings?.penType || 'ballpoint',
           imperfectionLevel: settings?.imperfectionLevel ?? 0.5,
-          slantAngle: profile?.processedData?.avgSlant || (settings?.slantAngle || 0),
-          letterSpacing: profile?.processedData?.avgSpacing ? (profile.processedData.avgSpacing / 3.0) : (settings?.letterSpacing || 1),
+          // Use profile slant if available, otherwise user setting
+          slantAngle: profile?.processedData?.avgSlant ?? (settings?.slantAngle ?? 0),
+          // avgSpacing is gap in pixels between chars; normalize to a 0.8-2.0 multiplier
+          letterSpacing: profile?.processedData?.avgSpacing
+            ? Math.max(0.8, Math.min(2.0, profile.processedData.avgSpacing / 4.0))
+            : (settings?.letterSpacing || 1.0),
           lineSpacing: settings?.lineSpacing || 1.5,
           marginLeft: settings?.marginLeft || 60,
           marginRight: settings?.marginRight || 40,

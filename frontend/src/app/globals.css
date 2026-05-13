@@ -317,10 +317,48 @@ body {
   background: rgba(108, 99, 255, 0.06);
 }
 
+/* ── Range inputs ── */
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border-subtle);
+  outline: none;
+}
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent-purple);
+  cursor: pointer;
+  box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+  transition: box-shadow 0.2s;
+}
+input[type='range']::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 0 5px rgba(108, 99, 255, 0.35);
+}
+input[type='range']::-moz-range-thumb {
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--accent-purple);
+  cursor: pointer;
+  border: none;
+}
+
+/* ── Select field fix ── */
+select.input-field option {
+  background: #141428;
+  color: var(--text-primary);
+}
+
 /* ── Responsive ── */
 @media (max-width: 768px) {
   .btn-primary, .btn-secondary { padding: 10px 20px; font-size: 0.875rem; }
   .card { padding: 16px; }
+  .gen-grid { grid-template-columns: 1fr !important; }
 }
 
 /* ── Glow orbs (decorative) ── */
